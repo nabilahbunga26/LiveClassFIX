@@ -1,0 +1,10 @@
+{
+  "name": "LiveClass AI Interactive Room",
+  "description": "Interactive classroom platform featuring real-time presentations, quizzes, live chat, leaderboards, participants analytics, and TCP/Socket simulation.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

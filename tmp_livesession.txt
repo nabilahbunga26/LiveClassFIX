@@ -1,0 +1,434 @@
+            {(activeTab === 'livesession') && (
+              <div className="space-y-4 text-left">
+                {!activeMeeting ? (
+                  <div className="border-4 border-black p-8 bg-amber-50 text-center space-y-4 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] select-none my-4">
+                    <div className="animate-spin h-10 w-10 border-4 border-[#FF007A] border-t-transparent rounded-full mx-auto" />
+                    <h3 className="font-display font-black text-lg text-black uppercase tracking-tight">
+                      ⏳ RUANG TUNGGU LIVE CLASS INTERAKTIF
+                    </h3>
+                    <p className="text-xs text-gray-700 max-w-md mx-auto font-semibold leading-relaxed">
+                      Sesi perkuliahan interaktif Live Class masih dikunci (<strong>LOCKED</strong>). Silakan menunggu Teacher mengaktifkan Sesi Pertemuan Kuliah di Konsol Utama Teacher.
+                    </p>
+                    <div className="text-[10px] bg-slate-800 text-yellow-300 font-mono font-bold px-3 py-1.5 inline-block uppercase border border-black">
+                      STATUS PORTAL: WAITING_FOR_ACTIVATION
+                    </div>
+                  </div>
+                ) : !hasCheckedIn ? (
+                  <div className="border-4 border-black p-6 bg-cyan-50 shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] space-y-6 max-w-2xl mx-auto my-6 text-left">
+                    <div className="border-b-2 border-black pb-3 select-none">
+                      <div className="flex justify-between items-center flex-wrap gap-2">
+                        <span className="text-[10px] font-mono font-black text-[#FF007A] bg-[#FF007A]/10 border border-black px-2 py-0.5 uppercase flex items-center gap-1.5">
+                          <Camera className="h-3.5 w-3.5 shrink-0" /> VERIFIKASI WAJAH & PRESENSI KELAS
+                        </span>
+                        <span className="text-[9.5px] font-mono font-black text-[#FF007A] uppercase bg-pink-50 border border-pink-200 px-1.5 py-0.5">
+                          MANDATORY ONCAM
+                        </span>
+                      </div>
+                      <h3 className="font-display font-black text-base text-black mt-2 uppercase tracking-tight flex items-center gap-1.5">
+                        <Lock className="h-4 w-4 shrink-0 text-black" /> Pintu Gerbang Live Class Interaktif Terkunci
+                      </h3>
+                      <p className="text-xs text-gray-700 mt-1 font-semibold leading-relaxed">
+                        Anda belum melakukan presensi untuk Sesi Pertemuan ini ({activeMeeting.topic}). Untuk membuka seluruh fitur (Slide interaktif, Kuis real-time, Chat & Roster), Anda diwajibkan untuk:
+                      </p>
+                      <ul className="list-decimal list-inside text-[11px] text-gray-600 font-extrabold mt-1.5 space-y-0.5">
+                        <li>Daftarkan presensi dengan mengaktifkan kamera laptop/HP Anda.</li>
+                        <li>Masukkan Kode Presensi PIN aman yang dibagikan oleh Teacher.</li>
+                      </ul>
+                    </div>
+
+                    <div className="space-y-4 bg-white border-4 border-black p-5">
+                      {/* Video scan grid container */}
+                      <div className="relative border-4 border-black bg-black aspect-video max-w-md mx-auto overflow-hidden shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                        {isAttendanceOnCam ? (
+                          <>
+                            {/* Real HTML video feed */}
+                            <video
+                              ref={setAttendanceVideoRef}
+                              className="absolute inset-0 w-full h-full object-cover select-none"
+                              playsInline
+                              muted
+                              autoPlay
+                            />
+                            {/* Scanner green bar line */}
+                            <div className="absolute left-0 w-full h-1 bg-[#00E5FF] shadow-[0_0_10px_2px_#00E5FF] animate-bounce top-1/2 pointer-events-none"></div>
+                            <div className="absolute inset-x-8 inset-y-6 border-2 border-dashed border-emerald-400 flex items-center justify-center bg-emerald-400/5 select-none text-emerald-300 font-mono text-[9px] text-center pointer-events-none">
+                              CV_FACE_RECOGNITION: SCANNING_FACIAL_STRUCTURE_OK✓
+                              <br/>[STATUS: STUDENT_MATCHED]
+                            </div>
+                            <div className="absolute top-2 left-2 text-[8px] font-mono text-emerald-400 bg-neutral-900 border border-emerald-500 px-2 uppercase font-black pointer-events-none">
+                              🟢 WEBCAM_LIVE • FACIAL_DETECTED ✓
+                            </div>
+                          </>
+                        ) : (
+                          <div className="absolute inset-0 flex flex-col justify-center items-center text-gray-500 font-mono text-[10px] space-y-2 p-4 text-center select-none">
+                            <Camera className="h-8 w-8 text-[#FF007A] animate-pulse" />
+                            <span className="font-extrabold uppercase text-gray-400">CAMERA_DISABLED</span>
+                            <span className="text-[9.5px]">Izinkan & aktifkan kamera scanner wajah Anda di bawah untuk mengaktifkan slot pengisian Kode PIN.</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="text-center pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setIsAttendanceOnCam(!isAttendanceOnCam)}
+                          className={`px-4 py-2 border-2 border-black font-black uppercase text-[10px] tracking-wider shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] active:shadow-none transition-all cursor-pointer ${
+                            isAttendanceOnCam ? 'bg-rose-500 text-white' : 'bg-[#00E5FF] text-black'
+                          }`}
+                        >
+                          <span className="flex items-center space-x-1.5 justify-center">
+                            {isAttendanceOnCam ? (
+                              <>
+                                <CameraOff className="h-3.5 w-3.5 shrink-0" />
+                                <span>MATIKAN SCANNER WAJAH</span>
+                              </>
+                            ) : (
+                              <>
+                                <Camera className="h-3.5 w-3.5 shrink-0" />
+                                <span>HIDUPKAN SCANNER WAJAH</span>
+                              </>
+                            )}
+                          </span>
+                        </button>
+                      </div>
+
+                      {isAttendanceOnCam && (
+                        <div className="border-2 border-dashed border-[#00E5FF] p-4 bg-cyan-50/5 space-y-3.5 text-left animate-fade-in select-none">
+                          <span className="text-[10px] font-black text-[#008ba3] uppercase tracking-widest font-mono block">
+                            ✍️ MASUKKAN PIN PRESENSI DARI TEACHER:
+                          </span>
+                          
+                          <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                            <input
+                              type="text"
+                              placeholder="Contoh PIN: 9021"
+                              required
+                              value={inputAttendanceCode}
+                              onChange={(e) => setInputAttendanceCode(e.target.value.toUpperCase())}
+                              className="p-2 border-2 border-black bg-white focus:outline-none placeholder-gray-300 font-mono text-xs font-black uppercase tracking-widest w-full sm:w-44 text-center"
+                            />
+
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (!inputAttendanceCode.trim()) {
+                                  showAlert('Harap masukkan PIN presensi!');
+                                  return;
+                                }
+                                if (inputAttendanceCode.trim().toUpperCase() !== (attendanceCode || '').toUpperCase()) {
+                                  showAlert('Kode PIN presensi yang dimasukkan tidak cocok / tidak valid!');
+                                  return;
+                                }
+                                
+                                // Submit attendance with correct wrapper and meetingId matching App.tsx's handler
+                                let facePhotoUrl = "";
+                                if (isAttendanceOnCam && attendanceVideoRef.current) {
+                                  try {
+                                    const tempCanvas = document.createElement('canvas');
+                                    tempCanvas.width = 320;
+                                    tempCanvas.height = 240;
+                                    const tempCtx = tempCanvas.getContext('2d');
+                                    if (tempCtx) {
+                                      // Mirror reflection for matching user view
+                                      tempCtx.scale(-1, 1);
+                                      tempCtx.drawImage(attendanceVideoRef.current, -320, 0, 320, 240);
+                                      facePhotoUrl = tempCanvas.toDataURL('image/jpeg', 0.6);
+                                    }
+                                  } catch (err) {
+                                    console.warn("Failed to capture attendance photo frame:", err);
+                                  }
+                                }
+
+                                const record = {
+                                  id: 'att-' + Math.random().toString(36).substr(2, 9),
+                                  meetingId: activeMeeting?.id || '',
+                                  studentName: username,
+                                  timestamp: generateFormattedTimestamp(),
+                                  time: generateFormattedTimestamp(),
+                                  facePhotoUrl: facePhotoUrl || "",
+                                };
+                                onBroadcastPayload('ATTENDANCE_SUBMITTED', { record });
+                                showAlert('Presensi sukses diverifikasi! Selamat belajar di Live Class.');
+                              }}
+                              className="w-full sm:w-auto px-4 py-2 bg-emerald-400 hover:bg-emerald-500 border-2 border-black text-emerald-950 font-black uppercase text-[10px] tracking-wider shadow-[1.5px_1.5px_0px_0px_rgba(0,0,0,1)] cursor-pointer text-center"
+                            >
+                              SUBMIT PRESENSI ✓
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                        {/* Simulated active Quiz block (Renders floating over slides if any active) */}
+                {activeQuiz && (
+                  <div className="bg-white border-4 border-[#FF007A] p-5 shadow-[6px_6px_0px_0px_rgba(111,111,111,0.2)] space-y-4 relative overflow-hidden transition-all duration-300">
+                    
+                    {/* Top sliding bar indicating elapsed time */}
+                    <div className="absolute right-0 top-0 h-1.5 bg-rose-100 w-full border-b border-black">
+                      <div 
+                        className="h-full bg-[#FF007A] transition-all duration-1000"
+                        style={{ width: `${(timerLeft / activeQuiz.durationSeconds) * 100}%` }}
+                      />
+                    </div>
+
+                    {/* Teacher real-time alert pop-up notification banner */}
+                    {incomingTeacherAction && (
+                      <div className="animate-bounce bg-rose-500 border-4 border-black text-white p-3.5 mb-2 flex items-center space-x-3 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]">
+                        <AlertTriangle className="h-6 w-6 text-yellow-300 shrink-0" />
+                        <div>
+                          <p className="font-mono text-xs font-black uppercase">⚠️ ACTION FROM LECTURER: {incomingTeacherAction.actionType?.toUpperCase() || 'WARN'}</p>
+                          <p className="font-sans text-xs font-bold">{incomingTeacherAction.text || "Mohon fokus ke layar ujian dan wajib aktifkan webcam!"}</p>
+                          {incomingTeacherAction.deduction && (
+                            <span className="text-[10px] bg-black px-2 py-0.5 font-mono text-yellow-300 font-bold ml-1 rounded">-{incomingTeacherAction.deduction} PTS</span>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Quick Proctor warning alerts system */}
+                    {proctorState.warningCount > 0 && (
+                      <div className="bg-rose-500 text-white border-4 border-black p-3 flex items-center justify-between shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] font-mono animate-pulse">
+                        <div className="flex items-center space-x-2">
+                          <AlertTriangle className="h-4 w-4 text-white" />
+                          <span className="text-xs font-black uppercase">
+                            {proctorState.warningCount === 1 && "Warning 1: Please keep your face visible."}
+                            {proctorState.warningCount === 2 && "Warning 2: Suspicious activity detected."}
+                            {proctorState.warningCount >= 3 && "Warning 3: Teacher Review Required."}
+                          </span>
+                        </div>
+                        <span className="text-[9px] bg-black text-rose-400 px-2 py-0.5 font-black uppercase">⚠️ DILATAS: {proctorState.warningCount} WNG</span>
+                      </div>
+                    )}
+
+                    {/* Main side-by-side quiz and proctor layout */}
+                    <div className="grid grid-cols-1 md:grid-cols-12 gap-5">
+                      
+                      {/* Left: Question + choices */}
+                      <div className="md:col-span-8 space-y-4">
+                        <div className="flex justify-between items-center border-b-2 border-black pb-2">
+                          <div className="flex items-center space-x-2">
+                            <HelpCircle className="h-5 w-5 text-[#FF007A] animate-pulse" />
+                            <div>
+                              <p className="text-xs font-black text-[#FF007A] tracking-wider font-mono">QUIZ DETECTED LIVE⚡ (INTEGRITAS AI AKTIF)</p>
+                              <p className="text-[9px] text-gray-500 font-mono font-bold uppercase">Webcam wajib aktif. Perpintahan tab atau minimasi akan terekam.</p>
+                            </div>
+                          </div>
+
+                          <div className="h-9 w-9 border-4 border-black bg-white flex items-center justify-center font-mono font-black text-sm text-[#FF007A]">
+                            {timerLeft}
+                          </div>
+                        </div>
+
+                        {proctorState.isInvalidated ? (
+                          <div className="p-8 border-4 border-black bg-rose-100 text-rose-950 font-black text-center space-y-2">
+                            <span className="text-3xl">🚫</span>
+                            <h4 className="text-sm font-black uppercase">STATUS KUIS DIBATALKAN</h4>
+                            <p className="text-[11px] text-rose-800 font-mono">Teacher pengawas telah membatalkan sesi ujian Anda karena terindikasi melakukan kecurangan.</p>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="text-base font-black leading-relaxed pl-1 text-[#111111] mb-4">
+                              {activeQuiz.question}
+                            </p>
+
+                            {activeQuiz.type === 'short-answer' ? (
+                              <div className="space-y-3 bg-white border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] text-left">
+                                <label className="text-[10px] font-mono font-black text-gray-500 uppercase block">Ketikkan Isian Singkat Anda di Sini:</label>
+                                <div className="flex gap-2">
+                                  <input
+                                    type="text"
+                                    disabled={selectedOption !== null || timerLeft <= 0}
+                                    value={studentShortAnswerInput}
+                                    onChange={(e) => setStudentShortAnswerInput(e.target.value)}
+                                    placeholder="Isi jawaban singkat Anda..."
+                                    className="flex-grow p-3 border-2 border-black focus:outline-none text-xs font-sans font-bold text-black"
+                                  />
+                                  <button
+                                    type="button"
+                                    disabled={selectedOption !== null || timerLeft <= 0 || !studentShortAnswerInput.trim()}
+                                    onClick={() => {
+                                      const textAns = studentShortAnswerInput.trim();
+                                      setStudentShortAnswerResponseValue(textAns);
+                                      const correctAnswers = (activeQuiz.correctAnswerText || '').trim().toLowerCase().split('|');
+                                      let isCorrect = false;
+                                      for (const ans of correctAnswers) {
+                                        if (textAns.toLowerCase().includes(ans) || ans.includes(textAns.toLowerCase())) {
+                                          isCorrect = true;
+                                        }
+                                      }
+                                      handleSelectOption(isCorrect ? 0 : 1, textAns);
+                                    }}
+                                    className="px-4 py-2 bg-[#00E5FF] hover:bg-[#00c5dd] text-black font-black border-2 border-black font-mono text-[10px] uppercase shadow-[2.5px_2.5px_0px_0px_rgba(0,0,0,1)] active:translate-x-px cursor-pointer"
+                                  >
+                                    KIRIM ✓
+                                  </button>
+                                </div>
+                                {selectedOption !== null && (
+                                  <div className="mt-3 p-3 border border-black bg-neutral-50 text-[11px] font-medium leading-relaxed font-sans">
+                                    <p className="font-extrabold uppercase text-xs">
+                                      Jawaban Anda: <span className="text-[#FF007A]">{studentShortAnswerResponseValue}</span>
+                                    </p>
+                                    <p className="mt-1">
+                                      Benar/Salah: <span className={selectedOption === 0 ? 'text-emerald-600 font-extrabold' : 'text-rose-600 font-extrabold'}>{selectedOption === 0 ? 'JAWABAN BENAR ✓' : 'JAWABAN SALAH ✗'}</span>
+                                    </p>
+                                    <p className="mt-0.5">
+                                      Kunci Jawaban Benar: <strong className="text-emerald-600 font-extrabold">{activeQuiz.correctAnswerText || 'Tidak ada spesifikasi'}</strong>
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <div className="space-y-3">
+                                {activeQuiz.options.map((opt, oIdx) => {
+                                  const isChosenAndCorrect = selectedOption === oIdx && oIdx === activeQuiz.correctOptionIndex;
+                                  const isChosenAndIncorrect = selectedOption === oIdx && oIdx !== activeQuiz.correctOptionIndex;
+                                  
+                                  let borderStyle = 'border-black bg-white text-black hover:bg-gray-100 shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]';
+                                  let tagStyle = 'bg-white text-black border-r-2 border-black';
+
+                                  if (selectedOption !== null) {
+                                    if (oIdx === activeQuiz.correctOptionIndex) {
+                                      borderStyle = 'border-black bg-emerald-500 text-white font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]';
+                                      tagStyle = 'bg-emerald-500 text-white border-r-2 border-black';
+                                    } else if (isChosenAndIncorrect) {
+                                      borderStyle = 'border-black bg-rose-500 text-white font-black shadow-[3px_3px_0px_0px_rgba(0,0,0,1)]';
+                                      tagStyle = 'bg-rose-500 text-white border-r-2 border-black';
+                                    } else {
+                                      borderStyle = 'border-gray-300 bg-gray-50 text-gray-400';
+                                      tagStyle = 'bg-gray-100 text-gray-400 border-r-2 border-gray-300';
+                                    }
+                                  }
+
+                                  return (
+                                    <button
+                                      key={oIdx}
+                                      id={`btn-student-opt-${oIdx}`}
+                                      onClick={() => handleSelectOption(oIdx, opt)}
+                                      disabled={selectedOption !== null || timerLeft <= 0}
+                                      className={`w-full p-0 flex items-stretch rounded-none text-left text-xs md:text-sm cursor-pointer transition-none border-2 flex items-stretch min-h-[36px] ${borderStyle}`}
+                                    >
+                                      <span className={`w-8 flex items-center justify-center text-xs shrink-0 ${tagStyle}`}>
+                                        {String.fromCharCode(65 + oIdx)}
+                                      </span>
+                                      <span className="p-2.5 leading-snug font-bold flex items-center">{opt}</span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+
+                            {selectedOption !== null && (
+                              <p className="text-center text-[10px] text-emerald-800 font-mono font-bold py-2 bg-emerald-100 border-2 border-emerald-500 uppercase">
+                                ✓ OK: JAWABAN BERHASIL DISIARKAN KE SERVER BROADCAST ROOM!
+                              </p>
+                            )}
+                          </>
+                        )}
+                      </div>
+
+                      {/* Right: AI Proctor HUD Canvas Container */}
+                      <div className="md:col-span-4 border-4 border-black p-3 space-y-3.5 bg-gray-900 text-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]">
+                        <div className="flex items-center justify-between border-b border-gray-700 pb-1.5">
+                          <span className="text-[10px] font-black font-mono tracking-wider flex items-center text-[#00E5FF]">
+                            <Shield className="h-3.5 w-3.5 mr-1 text-emerald-400 shrink-0" />
+                            AI PROCTOR FEED
+                          </span>
+                          <span className={`h-2 w-2 rounded-full ${proctorState.status === 'normal' ? 'bg-emerald-500 animate-pulse' : proctorState.status === 'warning' ? 'bg-yellow-400 animate-pulse' : 'bg-red-500 animate-pulse'}`} />
+                        </div>
+
+                        {/* Video feedback placeholder & hidden video */}
+                        <div className="relative border-2 border-slate-700 bg-black aspect-video overflow-hidden">
+                          <video 
+                            ref={setVideoRef} 
+                            style={{ display: 'none' }} 
+                            playsInline 
+                            muted
+                          />
+                          <canvas 
+                            ref={canvasRef} 
+                            width={240} 
+                            height={180} 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+
+                        {/* Live Telemetry KPI badges */}
+                        <div className="grid grid-cols-2 gap-1.5 font-mono text-[9px]">
+                          <div className="bg-slate-800 p-1.5 border border-slate-700">
+                            <span className="text-gray-400 block">FOCUS LEVEL</span>
+                            <span className="text-xs font-black text-[#00E5FF]">{proctorState.focusScore}%</span>
+                          </div>
+                          <div className="bg-slate-800 p-1.5 border border-slate-700">
+                            <span className="text-gray-400 block">WARNINGS</span>
+                            <span className={`text-xs font-black ${proctorState.warningCount > 1 ? 'text-red-400' : 'text-emerald-400'}`}>{proctorState.warningCount} / 3</span>
+                          </div>
+                          <div className="bg-slate-800 p-1.5 border border-slate-700">
+                            <span className="text-gray-400 block">TAB SWITCH</span>
+                            <span className="text-xs font-black text-amber-300">{proctorState.tabSwitchCount}x</span>
+                          </div>
+                          <div className="bg-slate-800 p-1.5 border border-slate-700 border-none bg-indigo-950/45">
+                            <span className="text-gray-400 block font-sans">EST STATUS</span>
+                            <span className={`text-[8px] font-black uppercase ${proctorState.status === 'normal' ? 'text-emerald-400' : proctorState.status === 'warning' ? 'text-yellow-400' : 'text-red-400'}`}>
+                              {proctorState.status.toUpperCase()}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Interactive testing and evaluation section */}
+                        <div className="bg-slate-800 border border-slate-700 p-2 text-[9px] space-y-2 select-none text-left">
+                          <p className="text-[8px] font-black font-mono tracking-widest text-[#FF007A] uppercase">🧪 TESTING CONTROLS (SIMULATE CHEATING):</p>
+                          
+                          <div className="grid grid-cols-2 gap-1.5 font-mono text-[8.5px]">
+                            <button
+                              type="button"
+                              onClick={handleToggleWebcam}
+                              className={`py-1.5 px-0.5 border text-center transition-all cursor-pointer ${proctorState.isWebcamOn ? 'bg-emerald-600/20 border-emerald-500 text-emerald-400' : 'bg-red-500 border-red-400 text-white'}`}
+                            >
+                              Webcam: {proctorState.isWebcamOn ? 'ON' : 'OFF'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleToggleFaceAbsence}
+                              className={`py-1.5 px-0.5 border text-center transition-all cursor-pointer ${proctorState.isFaceDetected ? 'bg-slate-700 border-[#475569] text-gray-400' : 'bg-yellow-500 border-yellow-400 text-black font-black'}`}
+                            >
+                              NoFace: {!proctorState.isFaceDetected ? 'ON' : 'OFF'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleToggleGazeDeviation}
+                              className={`py-1.5 px-0.5 border text-center transition-all cursor-pointer ${!proctorState.isGazeDeviation ? 'bg-slate-700 border-[#475569] text-gray-400' : 'bg-[#FF007A] border-[#FF007A] text-white font-black'}`}
+                            >
+                              GazeAway: {proctorState.isGazeDeviation ? 'ON_DEV' : 'OFF'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleToggleMultipleFaces}
+                              className={`py-1.5 px-0.5 border text-center transition-all cursor-pointer ${!proctorState.isMultipleFaces ? 'bg-slate-700 border-[#475569] text-gray-400' : 'bg-red-600/30 border-red-500 text-red-400 font-bold'}`}
+                            >
+                              MultiFace: {proctorState.isMultipleFaces ? 'ON_MLT' : 'OFF'}
+                            </button>
+                          </div>
+                          <span className="block text-[7.5px] italic text-slate-400 font-sans leading-relaxed text-center leading-xs">Simulasi pemicu kecurangan untuk diuji pada dashboard guru.</span>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                )}
+
+                <div className="border-4 border-black p-1 bg-gray-100 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <PdfSlidesContainer
+                    slides={slides}
+                    currentSlideIndex={currentSlideIndex}
+                    onNavigate={() => {}}
+                    role="student"
+                    externalAnnotations={externalAnnotations}
+                  />
+                </div>
+
+              </>
+            )}
+          </div>
+        )}
